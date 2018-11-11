@@ -2,7 +2,7 @@
     "name": "URL Recorder",
     "version": "0.1",
     "description": "It records URL's and submit them onto the server.",
-    "permissions": ["storage"],
+    "permissions": ["storage","tabs"],
     "background": {
         "scripts": ["background.js"],
         "persistent": false
