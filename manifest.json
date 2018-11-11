@@ -2,9 +2,10 @@
     "name": "URL Recorder",
     "version": "0.1",
     "description": "It records URL's and submit them onto the server.",
-    "permissions": ["storage","tabs"],
+    "permissions": ["storage", "http://*/" , "https://*/" ],
     "background": {
-        "scripts": ["background.js"],
+        "scripts": ["background.js",
+        "get-url.js"],
         "persistent": false
       },
     "manifest_version": 2
