@@ -7,5 +7,10 @@ chrome.runtime.onInstalled.addListener(function() {
     if (changeInfo.status == 'complete') {
         var tablink = tab.url;
         console.log(tablink);
+        chrome.storage.local.set({'value': tablink}, function() {
+            // Notify that we saved.
+            console.log('URL saved');
+          });
     }
   })
+  
