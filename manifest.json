@@ -1,5 +1,5 @@
 {
-  "name": "URL Recorder",
+  "name": "Digital Footprint",
   "version": "0.1",
   "description": "It records URL's and submit them onto the server.",
   "permissions": ["storage", "http://*/", "https://*/"],
@@ -7,5 +7,12 @@
     "scripts": ["background.js"],
     "persistent": false
   },
+  "browser_action": {
+    "default_icon": {           
+      "16": "img/icon.png"
+    },
+    "default_title": "Your Footprint",
+    "default_popup": "index.html"  
+  } ,
   "manifest_version": 2
 }
