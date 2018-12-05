@@ -1,22 +1,17 @@
 //check initialization
 chrome.runtime.onInstalled.addListener(function() {
-  chrome.storage.sync.get(["inintialization"], function(result) {
-    console.log("Value currently is " + result.inintialization);
-    if (result.inintialization == undefined) {
-      var visits = [Date.now() + "," + "inintialization"];
-      chrome.storage.sync.set({ visits: visits }, function() {
-        console.log("Empty database(visits) created!");
-      });
-      var currentDate = Date.now();
-      chrome.storage.sync.set({
-        inintialization: "*extension initialized!*" + currentDate
-      });
-      console.log(result.inintialization);
-    } else {
-      console.log("Ready");
+  chrome.storage.sync.get(["visits"], function(result) {
+    if (result.visits) {
+      console.log("🕵️‍♂️ Digital Footprint is ready");
+      return;
     }
+
+    chrome.storage.sync.set({ visits: [] }, function() {
+      console.log("🕵️‍♂️ Empty database(visits) created!");
+    });
   });
 });
+
 //URL listener
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
   if (changeInfo.status == "complete") {
@@ -29,11 +24,11 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
     const url = new URL(tablink);
     console.log(url);
 
-    var currentDate = Date.now();
+    const currentDate = Date.now();
     console.log(tablink);
     chrome.storage.sync.get(["visits"], function(result) {
-      var visits = result.visits;
-      visits.push(currentDate + "," + url.host);
+      const visits = result.visits;
+      visits.push({ time: currentDate, host: url.host });
       chrome.storage.sync.set({ visits: visits }, function() {
         // Notify that we saved.
         console.log("URL saved");
