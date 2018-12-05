@@ -20,23 +20,15 @@ chrome.runtime.onInstalled.addListener(function() {
 //URL listener
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
   if (changeInfo.status == "complete") {
-<<<<<<< HEAD
     const tablink = tab.url;
 
-=======
-    const tablink = new URL(tab.url);
->>>>>>> .
     if (tablink == undefined) {
       return;
     }
-<<<<<<< HEAD
 
     const url = new URL(tablink);
     console.log(url);
 
-=======
-    
->>>>>>> .
     var currentDate = Date.now();
     console.log(tablink);
     chrome.storage.sync.get(["visits"], function(result) {
