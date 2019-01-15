@@ -1,0 +1,138 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Dashboard | My Digital Footprint</title>
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/dashboard.css" rel="stylesheet">
+
+</head>
+<body>
+<!-- Navbar -->
+<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+    <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">My Digital Footprint</a>
+</nav>
+
+<!-- Nav -->
+<div class="container-fluid">
+    <div class="row">
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+            <div class="sidebar-sticky">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">
+                            <span data-feather="overview"></span>
+                            Overview <span class="sr-only">(current)</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <span data-feather="by_category"></span>
+                            By Category
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <span data-feather="by_visit"></span>
+                            By Visit
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <span data-feather="fullstats"></span>
+                            Full Statistics
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <!-- chart area -->
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Dashboard</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <div class="btn-group mr-2">
+                        <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">This week</button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="#">This month</a>
+                        <a class="dropdown-item" href="#">In 3 months</a>
+                        <a class="dropdown-item" href="#">In 6 months</a>
+                        <div role="separator" class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#">All time</a>
+                    </div>
+                </div>
+            </div>
+            <!-- chart -->
+            <div id="piechart" style="width: 900px; height: 500px;"></div>
+
+
+            <!-- table -->
+            <h2>Browsing Record</h2>
+            <div class="table-responsive">
+                <table class="table table-striped table-sm">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Host</th>
+                        <th>Category</th>
+                        <th>Time</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>6</td>
+                        <td>google.ca</td>
+                        <td>Search engine</td>
+                        <td>4:05 PM Jan 12, 2019 </td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>google.ca</td>
+                        <td>Search engine</td>
+                        <td>4:01 PM Jan 12, 2019 </td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>google.ca</td>
+                        <td>Search engine</td>
+                        <td>4:00 PM Jan 12, 2019 </td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>amazon.ca</td>
+                        <td>Shopping</td>
+                        <td>3:50 PM Jan 12, 2019 </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>store.steampowered.com</td>
+                        <td>Video & Computer Games</td>
+                        <td>3:30 PM Jan 12, 2019 </td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>spotify.com</td>
+                        <td>Music and Audio</td>
+                        <td>3:00 PM Jan 12, 2019 </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</div>
+<script>window.jQuery || document.write('<script src="js/jquery-slim.min.js"><\/script>')</script>
+<script src="js/bootstrap.bundle.js" ></script>
+<script src="js/jquery-slim.min.js" ></script>
+<script src="js/chart.js"></script>
+<script
+        type="text/javascript"
+        src="https://www.gstatic.com/charts/loader.js"
+></script>
+
+</body>
+
+</html>
