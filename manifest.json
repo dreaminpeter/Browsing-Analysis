@@ -3,6 +3,12 @@
   "version": "0.1",
   "description": "It records URL's and submit them onto the server.",
   "permissions": ["storage", "http://*/", "https://*/"],
+  "content_scripts": [
+    {
+      "matches": ["*://*/"],
+      "js": ["https://www.gstatic.com/charts/loader.js"]
+    }
+  ],
   "background": {
     "scripts": ["background.js"],
     "persistent": false

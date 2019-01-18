@@ -2,7 +2,7 @@ google.charts.load("current", { packages: ["corechart"] });
 google.charts.setOnLoadCallback(boot);
 
 function boot() {
-  chrome.storage.sync.get(["visits"], function(result) {
+  chrome.storage.local.get(["visits"], function(result) {
     console.log(result);
   });
 }
