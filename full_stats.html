@@ -10,7 +10,7 @@
 <body>
 <!-- Navbar -->
 <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-    <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">My Digital Footprint</a>
+    <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="dashboard.html">My Digital Footprint</a>
 </nav>
 
 <!-- Nav -->
@@ -20,9 +20,9 @@
             <div class="sidebar-sticky">
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link active" href="#">
+                        <a class="nav-link" href="dashboard.html">
                             <span data-feather="overview"></span>
-                            Overview <span class="sr-only">(current)</span>
+                            Overview <span class="sr-only"></span>
                         </a>
                     </li>
                     <li class="nav-item">
@@ -32,7 +32,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="full_stats.html">
+                        <a class="nav-link active" href="#">
                             <span data-feather="fullstats"></span>
                             Full Statistics
                         </a>
@@ -42,54 +42,6 @@
         </nav>
         < *-- main area -->
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-            <!-- chart -->
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 class="h2">Dashboard</h1>
-                <div class="btn-toolbar mb-2 mb-md-0">
-                    <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">This week</button>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" href="#">This month</a>
-                        <a class="dropdown-item" href="#">In 3 months</a>
-                        <a class="dropdown-item" href="#">In 6 months</a>
-                        <div role="separator" class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">All time</a>
-                    </div>
-                </div>
-            </div>
-
-            <canvas id="piechart" width="900" height="500"></canvas>
-
-            <!-- Cards -->
-            <div class="container">
-                <div class="row">
-                    <div class="col-sm">
-                        <div class="card text-white bg-primary mb-3" style="max-width: 18rem;">
-                            <div class="card-header">Total Visits</div>
-                            <div class="card-body">
-                                <h5 class="card-title text-center"><span id="visits-count" >Updating</span></h5>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm">
-                        <div class="card text-white bg-secondary mb-3" style="max-width: 18rem;">
-                            <div class="card-header">Status</div>
-                            <div class="card-body">
-                                <h5 class="card-title"><span id="status">Updating</span></h5>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm">
-                        <div class="card text-white bg-success mb-3" style="max-width: 18rem;">
-                            <div class="card-header">Runtime</div>
-                            <div class="card-body">
-                                <h5 class="card-title"><span id="*unspecified*">Updating</span></h5>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
             <!-- table -->
             <h2>Browsing Record</h2>
             <div class="table-responsive">
@@ -148,7 +100,6 @@
 
 <script src="js/jquery-slim.min.js" ></script>
 <script src="js/bootstrap.bundle.js" ></script>
-<script src="js/chart.js"></script>
 <script src="js/utils.js"></script>
 <script src="js/dashboard.js"></script>
 </body>
