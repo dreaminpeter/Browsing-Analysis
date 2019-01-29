@@ -6,7 +6,7 @@ chrome.runtime.onInstalled.addListener(function() {
       return;
     }
 
-    chrome.storage.local.set({ visits: {} }, function() {
+    chrome.storage.local.set({ visits: { count: 0 } }, function() {
       console.log("🕵️‍♂️ Empty database(visits) created!");
     });
   });
@@ -29,6 +29,9 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
     chrome.storage.local.get(["visits"], function(result) {
       const visits = result.visits;
       let visitInfo = visits[url.host];
+
+      // Increment the total number of visits.
+      visits.count += 1;
 
       if (!visitInfo) {
         visitInfo = {
