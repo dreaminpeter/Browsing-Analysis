@@ -6,7 +6,7 @@ chrome.runtime.onInstalled.addListener(function() {
       return;
     }
 
-    chrome.storage.local.set({ visits: [] }, function() {
+    chrome.storage.local.set({ visits: {} }, function() {
       console.log("🕵️‍♂️ Empty database(visits) created!");
     });
   });
@@ -28,7 +28,19 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
     console.log(tablink);
     chrome.storage.local.get(["visits"], function(result) {
       const visits = result.visits;
-      visits.push({ time: currentDate, host: url.host });
+      let visitInfo = visits[url.host];
+
+      if (!visitInfo) {
+        visitInfo = {
+          category: "",
+          hits: []
+        };
+      }
+
+      visitInfo.hits.push(currentDate);
+      visits[url.host] = visitInfo;
+
+      // visits.push({ time: currentDate, host: url.host });
       chrome.storage.local.set({ visits: visits }, function() {
         // Notify that we saved.
         console.log("URL saved");
