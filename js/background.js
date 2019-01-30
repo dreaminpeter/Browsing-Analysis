@@ -1,3 +1,13 @@
+function getCategory(host) {
+  return fetch("https://webshrinker.herokuapp.com/category?host=" + host)
+    .then(function(response) {
+      return response.json();
+    })
+    .then(function(json) {
+      return json.categories[0].label;
+    });
+}
+
 //check initialization
 chrome.runtime.onInstalled.addListener(function() {
   chrome.storage.local.get(["visits"], function(result) {
@@ -26,7 +36,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 
     const currentDate = Date.now();
     console.log(tablink);
-    chrome.storage.local.get(["visits"], function(result) {
+    chrome.storage.local.get(["visits"], async function(result) {
       const visits = result.visits;
       let visitInfo = visits[url.host];
 
@@ -35,7 +45,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 
       if (!visitInfo) {
         visitInfo = {
-          category: "",
+          category: await getCategory(url.host),
           hits: []
         };
       }
