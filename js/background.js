@@ -31,7 +31,7 @@ chrome.runtime.onInstalled.addListener(function() {
       return;
     }
 
-    chrome.storage.local.set({ visits: { count: 0 } }, function() {
+    chrome.storage.local.set({ visits: { count: 0, firstHit: null } }, function() {
       console.log("🕵️‍♂️ Empty database(visits) created!");
     });
   });
@@ -57,6 +57,11 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 
       // Increment the total number of visits.
       visits.count += 1;
+
+      // Save first hit.
+      if (!visits.firstHit) {
+        visits.firstHit = Date.now();
+      }
 
       if (!visitInfo) {
         visitInfo = {
