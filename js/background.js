@@ -4,7 +4,22 @@ function getCategory(host) {
       return response.json();
     })
     .then(function(json) {
-      return json.categories[0].label;
+      const categories = json.categories;
+
+      categories.sort(function(a, b) {
+        const scoreA = parseFloat(a.score);
+        const scoreB = parseFloat(b.score);
+
+        if (scoreA > scoreB) {
+          return -1;
+        } else if (scoreB > scoreA) {
+          return 1;
+        } else {
+          return 0;
+        }
+      });
+
+      return categories[0].label;
     });
 }
 
