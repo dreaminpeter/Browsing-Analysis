@@ -10,15 +10,31 @@ function getCategory(host) {
         const scoreA = parseFloat(a.score);
         const scoreB = parseFloat(b.score);
 
-        if (scoreA > scoreB) {
-          return -1;
-        } else if (scoreB > scoreA) {
-          return 1;
-        } else {
-          return 0;
-        }
+        return scoreA > scoreB ? -1 : 1;
       });
 
+      let candidate = null;
+
+      // first try to get whatever has the WS<NUMBER> suffix.
+      [candidate] = categories.filter(category => category.id.match(/-WS\d+$/));
+
+      console.log("filter by WS", candidate);
+
+      if (candidate) {
+        return candidate.label;
+      }
+
+      // then, try to get whatever has the -<NUMBER> suffix.
+      [candidate] = categories.filter(category => category.id.match(/-\d+$/));
+
+      console.log("filter by -NUMBER", candidate);
+
+      if (candidate) {
+        return candidate.label;
+      }
+
+      // get whatever has the higher score.
+      console.log("sorry! this is all i got for you", candidate);
       return categories[0].label;
     });
 }
@@ -31,9 +47,12 @@ chrome.runtime.onInstalled.addListener(function() {
       return;
     }
 
-    chrome.storage.local.set({ visits: { count: 0, firstHit: null } }, function() {
-      console.log("🕵️‍♂️ Empty database(visits) created!");
-    });
+    chrome.storage.local.set(
+      { visits: { count: 0, firstHit: null } },
+      function() {
+        console.log("🕵️‍♂️ Empty database(visits) created!");
+      }
+    );
   });
 });
 
