@@ -24,15 +24,6 @@ function getCategory(host) {
         return candidate.label;
       }
 
-      // then, try to get whatever has the -<NUMBER> suffix.
-      [candidate] = categories.filter(category => category.id.match(/-\d+$/));
-
-      console.log("filter by -NUMBER", candidate);
-
-      if (candidate) {
-        return candidate.label;
-      }
-
       // get whatever has the higher score.
       console.log("sorry! this is all i got for you", candidate);
       return categories[0].label;
@@ -56,49 +47,110 @@ chrome.runtime.onInstalled.addListener(function() {
   });
 });
 
-//URL listener
-chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
-  if (changeInfo.status == "complete") {
-    const tablink = tab.url;
+function saveSession(tab) {
+  console.log("saveSession tab", tab);
 
-    if (tablink == undefined) {
-      return;
+  return new Promise(async (resolve, reject) => {
+    const visits = await getVisits();
+    const session = visits.session;
+
+    if (session) {
+      const hostInfo = visits[session.host];
+      hostInfo.hits.push({ start: session.start, end: Date.now() });
+      visits[session.host] = hostInfo;
+      visits.session = null;
     }
 
-    const url = new URL(tablink);
-    console.log(url);
+    const hasUrl = "url" in tab;
+    console.log("save session:", { tab });
 
-    const currentDate = Date.now();
-    console.log(tablink);
-    chrome.storage.local.get(["visits"], async function(result) {
-      const visits = result.visits;
-      let visitInfo = visits[url.host];
+    if (hasUrl) {
+      const url = new URL(tab.url);
+      const host = url.host;
+      visits.session = { host, start: Date.now() };
+    }
 
-      // Increment the total number of visits.
-      visits.count += 1;
+    await setVisits(visits);
+  });
+}
 
-      // Save first hit.
-      if (!visits.firstHit) {
-        visits.firstHit = Date.now();
-      }
-
-      if (!visitInfo) {
-        visitInfo = {
-          category: await getCategory(url.host),
-          hits: []
-        };
-      }
-
-      visitInfo.hits.push(currentDate);
-      visits[url.host] = visitInfo;
-
-      // visits.push({ time: currentDate, host: url.host });
-      chrome.storage.local.set({ visits: visits }, function() {
-        // Notify that we saved.
-        console.log("URL saved");
-      });
+function getVisits() {
+  return new Promise((resolve, reject) => {
+    chrome.storage.local.get(["visits"], function(result) {
+      resolve(result.visits);
     });
-  } else {
+  });
+}
+
+function setVisits(visits) {
+  return new Promise((resolve, reject) => {
+    chrome.storage.local.set({ visits }, resolve);
+  });
+}
+
+function initializeHost(tab) {
+  return new Promise(async (resolve, reject) => {
+    const visits = await getVisits();
+    const hasUrl = "url" in tab;
+
+    if (!hasUrl) {
+      return resolve();
+    }
+
+    const url = new URL(tab.url);
+    const host = url.host;
+
+    if (!visits[host]) {
+      visits[host] = {
+        hits: [],
+        category: await getCategory(host)
+      };
+
+      await setVisits(visits);
+    }
+
+    resolve();
+  });
+}
+
+function getTab(tabId) {
+  return new Promise((resolve, reject) => {
+    chrome.tabs.get(tabId, resolve);
+  });
+}
+
+// This event is triggered whenever a tab is activated,
+// but it's not triggered when the url changes.
+chrome.tabs.onActivated.addListener(async function(info) {
+  const tab = await getTab(info.tabId);
+
+  if (tab.status !== "complete") {
     return;
   }
+
+  await initializeHost(tab);
+  await saveSession(tab);
+});
+
+// This event is triggered whenever the tab url changes,
+// including page reloads.
+chrome.tabs.onUpdated.addListener(async function(tabId, changeInfo, tab) {
+  if (tab.status !== "complete") {
+    return;
+  }
+
+  await initializeHost(tab);
+  await saveSession(tab);
+
+  const visits = await getVisits();
+  visits.count += 1;
+
+  await setVisits(visits);
+});
+
+// This event is triggered whenever the tab is closed.
+chrome.tabs.onRemoved.addListener(async function(tabId) {
+  const tab = await getTab(tabId);
+  await initializeHost(tab);
+  await saveSession(tab);
 });
