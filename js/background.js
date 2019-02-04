@@ -48,8 +48,6 @@ chrome.runtime.onInstalled.addListener(function() {
 });
 
 function saveSession(tab) {
-  console.log("saveSession tab", tab);
-
   return new Promise(async (resolve, reject) => {
     const visits = await getVisits();
     const session = visits.session;
@@ -62,7 +60,6 @@ function saveSession(tab) {
     }
 
     const hasUrl = "url" in tab;
-    console.log("save session:", { tab });
 
     if (hasUrl) {
       const url = new URL(tab.url);
@@ -71,6 +68,7 @@ function saveSession(tab) {
     }
 
     await setVisits(visits);
+    resolve();
   });
 }
 
@@ -143,6 +141,11 @@ chrome.tabs.onUpdated.addListener(async function(tabId, changeInfo, tab) {
   await saveSession(tab);
 
   const visits = await getVisits();
+
+  if (!visits.firstHit) {
+    visits.firstHit = Date.now();
+  }
+
   visits.count += 1;
 
   await setVisits(visits);
