@@ -10,10 +10,10 @@ function prepareData(visits) {
         return;
       }
 
-      visits[host].hits.forEach(function(hit) {
+      visits[host].hits.forEach(function(hits) {
           const info = {
               host: host,
-              time: hit
+              time: hits
           };
 
           data.push(info);
