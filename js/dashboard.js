@@ -4,7 +4,12 @@ const COLORS = [
   "#F3E796",
   "#EF8533",
   "#EE463A",
-  "#C0355C"
+  "#C0355C",
+  "#D6FF79",
+  "#B0FF92",
+  "#A09BE7",
+  "#5F00BA",
+
 ];
 
 function prepareChartData(categories, data) {
@@ -25,7 +30,7 @@ function prepareChartData(categories, data) {
     rawValues.push(["OTHERS", otherTotal]);
   }
 
-  const values = rawValues.map(entry => entry[1]);
+  const values = rawValues.map(entry => entry[1] / 1000 /60);
   const labels = rawValues.map(entry => categories[entry[0]]);
 
   console.log(values);
@@ -54,7 +59,7 @@ function drawChart(categories, data) {
       labels: labels,
       datasets: [
         {
-          label: "# of Votes",
+          label: "Browsing Analysis",
           data: values,
           backgroundColor: COLORS,
           borderColor: COLORS,
@@ -63,6 +68,16 @@ function drawChart(categories, data) {
       ]
     },
     options: {
+      tooltips: {
+        enabled: true,
+        mode: 'single',
+        callbacks: {
+            label: function(tooltipItems, data) { 
+              //round up
+              return data.labels[tooltipItems.datasetIndex] + ': ' + Math.ceil(data.datasets[tooltipItems.datasetIndex].data[tooltipItems.index]) + ' minutes';
+            }
+        }
+    },
       scales: {
         yAxes: [
           {
