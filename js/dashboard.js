@@ -74,7 +74,7 @@ function drawChart(categories, data) {
         callbacks: {
             label: function(tooltipItems, data) { 
               //round up
-              return data.labels[tooltipItems.datasetIndex] + ': ' + Math.ceil(data.datasets[tooltipItems.datasetIndex].data[tooltipItems.index]) + ' minutes';
+              return data.labels[tooltipItems.index] + ': ' + Math.ceil(data.datasets[tooltipItems.datasetIndex].data[tooltipItems.index]) + ' minutes';
             }
         }
     },
