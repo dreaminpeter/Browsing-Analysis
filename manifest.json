@@ -4,7 +4,7 @@
   "description": "It records URL's and submit them onto the server.",
   "permissions": ["storage", "http://*/", "https://*/"],
   "background": {
-    "scripts": ["js/background.js"],
+    "scripts": ["js/utils.js", "js/background.js"],
     "persistent": false
   },
   "browser_action": {
@@ -13,6 +13,6 @@
     },
     "default_title": "Your Footprint",
     "default_popup": "index.html"
-  } ,
+  },
   "manifest_version": 2
 }

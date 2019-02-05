@@ -21,12 +21,14 @@ function getCategory(host) {
       console.log("filter by WS", candidate);
 
       if (candidate) {
-        return candidate.label;
+        return { id: candidate.id, name: candidate.label };
       }
 
       // get whatever has the higher score.
       console.log("sorry! this is all i got for you", candidate);
-      return categories[0].label;
+      candidate = categories[0];
+
+      return { id: candidate.id, name: candidate.label };
     });
 }
 
@@ -69,20 +71,6 @@ function saveSession(tab) {
 
     await setVisits(visits);
     resolve();
-  });
-}
-
-function getVisits() {
-  return new Promise((resolve, reject) => {
-    chrome.storage.local.get(["visits"], function(result) {
-      resolve(result.visits);
-    });
-  });
-}
-
-function setVisits(visits) {
-  return new Promise((resolve, reject) => {
-    chrome.storage.local.set({ visits }, resolve);
   });
 }
 

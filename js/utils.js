@@ -1,34 +1,63 @@
-function generateTable(data){
-    prepareData(result.visits);
-
+function getVisits() {
+  return new Promise((resolve, reject) => {
+    chrome.storage.local.get(["visits"], function(result) {
+      resolve(result.visits);
+    });
+  });
 }
+
+function setVisits(visits) {
+  return new Promise((resolve, reject) => {
+    chrome.storage.local.set({ visits }, resolve);
+  });
+}
+
+function generateTable(data) {
+  prepareData(result.visits);
+}
+
 function prepareData(visits) {
+  const keys = Object.keys(visits).filter(key => key.includes("."));
   const data = [];
 
-    Object.keys(visits).forEach(function (host) {
-      if (!visits[host].hits) {
-        return;
-      }
+  keys.forEach(key => {
+    const hostInfo = visits[key];
 
-      visits[host].hits.forEach(function(hits) {
-          const info = {
-              host: host,
-              time: hits
-          };
-
-          data.push(info);
+    hostInfo.hits.forEach(hit => {
+      data.push({
+        ...hit,
+        duration: hit.end - hit.start,
+        host: key,
+        category: hostInfo.category
       });
     });
+  });
 
-    data.sort(function(a, b) {
-      if (a.time > b.time) {
-        return -1;
-      } else {
-        return 1;
-      }
-    });
+  return data;
+}
 
-    console.log(data);
+function prepareSubset(data, threshold) {
+  const time = Date.now() - threshold;
+
+  return data.filter(hit => hit.end >= time);
+}
+
+function aggregateData(data) {
+  const aggregation = {};
+  const categoryNames = {};
+
+  data.forEach(entry => {
+    const categoryId = entry.category.id;
+    categoryNames[categoryId] = entry.category.name;
+
+    if (!aggregation[categoryId]) {
+      aggregation[categoryId] = 0;
+    }
+
+    aggregation[categoryId] += entry.duration;
+  });
+
+  return [categoryNames, aggregation];
 }
 
 function checkstatus() {
@@ -39,9 +68,11 @@ function checkstatus() {
 
     document.getElementById("status").innerHTML = "The extension is running!";
     document.getElementById("visits-count").innerHTML = result.visits.count;
-  //runtime
-    let totalTimeInMinutes = Math.floor((Date.now() - result.visits.firstHit) / 1000 / 60);
-    console.log('-------->', totalTimeInMinutes);
+    //runtime
+    let totalTimeInMinutes = Math.floor(
+      (Date.now() - result.visits.firstHit) / 1000 / 60
+    );
+    console.log("-------->", totalTimeInMinutes);
 
     if (totalTimeInMinutes < 1) {
       totalTimeInMinutes = "Less than a minute";
@@ -70,7 +101,5 @@ function checkstatus() {
     //       /* We add the table row to the table body */
     //       tbody.innerHTML += tr;
     //   }
-
-
   });
 }
