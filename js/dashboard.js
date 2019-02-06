@@ -29,7 +29,7 @@ function prepareChartData(categories, data) {
     rawValues.push(["OTHERS", otherTotal]);
   }
 
-  const values = rawValues.map(entry => entry[1] / 1000 /60);
+  const values = rawValues.map(entry => entry[1]);
   const labels = rawValues.map(entry => categories[entry[0]]);
 
   return [labels, values];
@@ -61,7 +61,8 @@ function drawChart(categories, data) {
         callbacks: {
             label: function(tooltipItems, data) {
               //round up
-              return data.labels[tooltipItems.index] + ': ' + Math.ceil(data.datasets[tooltipItems.datasetIndex].data[tooltipItems.index]) + ' minutes';
+              const timeSpent = data.datasets[tooltipItems.datasetIndex].data[tooltipItems.index];
+              return data.labels[tooltipItems.index] + ': ' + duration(timeSpent);
             }
         }
     },
@@ -84,7 +85,7 @@ async function renderChart(threshold) {
   const subset = threshold === 0 ? data : prepareSubset(data, threshold);
   console.log({ subset });
 
-  const [categories, aggregation] = aggregateData(subset);
+  const [categories, aggregation] = aggregateDataByCategory(subset);
 
   // display the chart
   drawChart(categories, aggregation);

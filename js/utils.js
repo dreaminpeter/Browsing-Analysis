@@ -12,10 +12,6 @@ function setVisits(visits) {
   });
 }
 
-function generateTable(data) {
-  prepareData(result.visits);
-}
-
 function prepareData(visits) {
   const keys = Object.keys(visits).filter(key => key.includes("."));
   const data = [];
@@ -28,7 +24,8 @@ function prepareData(visits) {
         ...hit,
         duration: hit.end - hit.start,
         host: key,
-        category: hostInfo.category
+        category: hostInfo.category,
+        hitsCount: hostInfo.count
       });
     });
   });
@@ -42,7 +39,7 @@ function prepareSubset(data, threshold) {
   return data.filter(hit => hit.end >= time);
 }
 
-function aggregateData(data) {
+function aggregateDataByCategory(data) {
   const aggregation = {};
   const categoryNames = {};
 
@@ -60,6 +57,62 @@ function aggregateData(data) {
   return [categoryNames, aggregation];
 }
 
+function aggregateDataByHost(data) {
+  const aggregation = {};
+
+  data.forEach(entry => {
+    if (!aggregation[entry.host]) {
+      aggregation[entry.host] = {
+        category: entry.category.name,
+        timeSpent: 0,
+        hitsCount: entry.hitsCount
+      };
+    }
+
+    aggregation[entry.host].timeSpent += entry.duration;
+  });
+
+  return aggregation;
+}
+
+function aggregationToArray(aggregation, prop) {
+  const result = [];
+
+  Object.keys(aggregation).forEach(key => {
+    const entry = aggregation[key];
+    entry[prop] = key;
+    result.push(entry);
+  });
+
+  return result;
+}
+
+function duration(durationInMilliseconds) {
+  let minutes = Math.ceil(durationInMilliseconds / 1000 / 60);
+  let hours;
+  let duration = "";
+
+  if (minutes > 60) {
+    hours = parseInt(minutes / 60, 10);
+    minutes -= hours * 60;
+    duration += `${hours} ${plural(hours, "hour")}`;
+  }
+
+  if (minutes > 0) {
+    duration += ` ${minutes} ${plural(minutes, "minute")}`;
+  }
+
+  return duration;
+}
+
+function plural(count, word) {
+  if (count === 1) {
+    return word;
+  } else {
+    return `${word}s`;
+  }
+}
+
 function checkstatus() {
   chrome.storage.local.get(["visits"], function(result) {
     if (!result.visits) {
@@ -68,38 +121,10 @@ function checkstatus() {
 
     document.getElementById("status").innerHTML = "The extension is running!";
     document.getElementById("visits-count").innerHTML = result.visits.count;
-    //runtime
-    let totalTimeInMinutes = Math.floor(
-      (Date.now() - result.visits.firstHit) / 1000 / 60
-    );
-    console.log("-------->", totalTimeInMinutes);
-
-    if (totalTimeInMinutes < 1) {
-      totalTimeInMinutes = "Less than a minute";
-    } else {
-      totalTimeInMinutes = `${totalTimeInMinutes} minutes`;
-    }
-
     const runtimeElement = document.getElementById("runtime");
 
     if (runtimeElement) {
-      runtimeElement.innerHTML = totalTimeInMinutes;
+      runtimeElement.innerHTML = duration(Date.now() - result.visits.firstHit);
     }
-
-    //table
-    // const tbody = document.getElementById("tableBody");
-    //   for (var i = 0; i < result.visits.count; i++) {
-    //       var tr = "<tr>";
-    //
-    //       /* Verification to add the last decimal 0 */
-    //       if (results.visits[i].value.toString().substring(result.visits[i].value.toString().indexOf('.'), result.visits[i].value.toString().length) < 2)
-    //           results.visits[i].value += "0";
-    //
-    //       /* Must not forget the $ sign */
-    //       tr += "<td>" + results.visits[i].key + "</td>" + "<td>$" + results.visits[i].value.toString() + "</td></tr>";
-    //
-    //       /* We add the table row to the table body */
-    //       tbody.innerHTML += tr;
-    //   }
   });
 }
