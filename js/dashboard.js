@@ -9,7 +9,6 @@ const COLORS = [
   "#B0FF92",
   "#A09BE7",
   "#5F00BA",
-
 ];
 
 function prepareChartData(categories, data) {
