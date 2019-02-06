@@ -33,18 +33,6 @@ function prepareChartData(categories, data) {
   const values = rawValues.map(entry => entry[1] / 1000 /60);
   const labels = rawValues.map(entry => categories[entry[0]]);
 
-  console.log(values);
-
-  //   Object.keys(data).forEach(categoryId => {
-  //     labels.push(categories[categoryId]);
-  //     values.push(data[categoryId]);
-  //   });
-
-  // We have more data than available colors,
-  // so summarize everything into OTHERS bucket.
-  //   if (labels.length > COLORS.length) {
-  //   }
-
   return [labels, values];
 }
 
@@ -72,7 +60,7 @@ function drawChart(categories, data) {
         enabled: true,
         mode: 'single',
         callbacks: {
-            label: function(tooltipItems, data) { 
+            label: function(tooltipItems, data) {
               //round up
               return data.labels[tooltipItems.index] + ': ' + Math.ceil(data.datasets[tooltipItems.datasetIndex].data[tooltipItems.index]) + ' minutes';
             }
