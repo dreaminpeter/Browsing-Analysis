@@ -89,7 +89,8 @@ function initializeHost(tab) {
     if (!visits[host]) {
       visits[host] = {
         hits: [],
-        category: await getCategory(host)
+        category: await getCategory(host),
+        count: 0
       };
 
       await setVisits(visits);
@@ -134,7 +135,10 @@ chrome.tabs.onUpdated.addListener(async function(tabId, changeInfo, tab) {
     visits.firstHit = Date.now();
   }
 
+  const host = new URL(tab.url).host;
+
   visits.count += 1;
+  visits[host].count += 1;
 
   await setVisits(visits);
 });
