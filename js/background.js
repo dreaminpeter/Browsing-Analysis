@@ -102,7 +102,13 @@ function initializeHost(tab) {
 
 function getTab(tabId) {
   return new Promise((resolve, reject) => {
-    chrome.tabs.get(tabId, resolve);
+    try {
+      chrome.tabs.get(tabId, resolve);
+    } catch (error) {
+      console.log("error while getting tab", error);
+    } finally {
+      resolve();
+    }
   });
 }
 
@@ -111,7 +117,7 @@ function getTab(tabId) {
 chrome.tabs.onActivated.addListener(async function(info) {
   const tab = await getTab(info.tabId);
 
-  if (tab.status !== "complete") {
+  if (!tab || tab.status !== "complete") {
     return;
   }
 
@@ -123,6 +129,10 @@ chrome.tabs.onActivated.addListener(async function(info) {
 // including page reloads.
 chrome.tabs.onUpdated.addListener(async function(tabId, changeInfo, tab) {
   if (tab.status !== "complete") {
+    return;
+  }
+
+  if (!tab.url) {
     return;
   }
 
