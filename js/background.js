@@ -1,3 +1,26 @@
+async function check24hourNotice() {
+  console.log("check24hourNotice");
+
+  const visits = await getVisits();
+  const after24Hours = Date.now() - visits.firstHit >= 86400;
+
+  console.log({
+    after24Hours,
+    firstHit: visits.firstHit,
+    now: Date.now(),
+    alredyShownMessage: visits.displayed24hourNotice
+  });
+
+  if (!after24Hours || visits.displayed24hourNotice) {
+    return;
+  }
+
+  window.open("reduce-usage-time-form.html");
+
+  visits.displayed24hourNotice = true;
+  await setVisits(visits);
+}
+
 function getCategory(host) {
   return fetch("https://webshrinker.herokuapp.com/category?host=" + host)
     .then(function(response) {
@@ -159,3 +182,5 @@ chrome.tabs.onRemoved.addListener(async function(tabId) {
   await initializeHost(tab);
   await saveSession(tab);
 });
+
+setInterval(check24hourNotice, 5000);
