@@ -8,25 +8,30 @@ const COLORS = [
   "#D6FF79",
   "#B0FF92",
   "#A09BE7",
-  "#5F00BA",
+  "#5F00BA"
 ];
 
-document.querySelector("#download-button").addEventListener("click", function() {
-  chrome.storage.local.get(null, function(items) { // null implies all items
-    // Convert object to a string.
-    var result = JSON.stringify(items);
+document
+  .querySelector("#download-button")
+  .addEventListener("click", function() {
+    chrome.storage.local.get(null, function(items) {
+      // null implies all items
+      // Convert object to a string.
+      var result = JSON.stringify(items);
 
-    // Save as file
-    var url = 'data:application/json;base64,' + btoa(result);
-    chrome.downloads.download({
+      // Save as file
+      var url = "data:application/json;base64," + btoa(result);
+      chrome.downloads.download({
         url: url,
         filename: (Math.random() * Math.random()).toString(36).substr(2, 12) + '_db.json'
     });
-});
-});
+  });
 
 function prepareChartData(categories, data) {
-  const listData = Object.keys(data).map(key => [key, data[key]]);
+  const listData = Object.keys(data).map(categoryId => [
+    categoryId,
+    data[categoryId]
+  ]);
   categories["OTHERS"] = "Others";
 
   listData.sort((a, b) => (a[1] > b[1] ? -1 : 1));
@@ -35,15 +40,16 @@ function prepareChartData(categories, data) {
   if (listData.length > COLORS.length) {
     rawValues = listData.slice(0, COLORS.length - 1);
     const otherValues = listData.slice(COLORS.length);
-    const otherTotal = otherValues.reduce(
-      (buffer, [_, timeSpent]) => buffer + timeSpent,
-      0
-    );
+    let otherTotal = 0;
 
-    rawValues.push(["OTHERS", otherTotal]);
+    otherValues.forEach(([categoryId, entry]) => {
+      otherTotal += entry.timeSpent;
+    });
+
+    rawValues.push(["OTHERS", { timeSpent: otherTotal }]);
   }
 
-  const values = rawValues.map(entry => entry[1]);
+  const values = rawValues.map(entry => entry[1].timeSpent);
   const labels = rawValues.map(entry => categories[entry[0]]);
 
   return [labels, values];
@@ -71,15 +77,17 @@ function drawChart(categories, data) {
     options: {
       tooltips: {
         enabled: true,
-        mode: 'single',
+        mode: "single",
         callbacks: {
-            label: function(tooltipItems, data) {
-              //round up
-              const timeSpent = data.datasets[tooltipItems.datasetIndex].data[tooltipItems.index];
-              return data.labels[tooltipItems.index] + ': ' + duration(timeSpent);
-            }
+          label: function(tooltipItems, data) {
+            //round up
+            const timeSpent =
+              data.datasets[tooltipItems.datasetIndex].data[tooltipItems.index]
+                .timeSpent;
+            return data.labels[tooltipItems.index] + ": " + duration(timeSpent);
+          }
         }
-    },
+      },
       scales: {
         yAxes: [
           {
@@ -97,8 +105,6 @@ async function renderChart(threshold) {
   const visits = await getVisits();
   const data = prepareData(visits);
   const subset = threshold === 0 ? data : prepareSubset(data, threshold);
-  console.log({ subset });
-
   const [categories, aggregation] = aggregateDataByCategory(subset);
 
   // display the chart

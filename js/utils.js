@@ -48,10 +48,12 @@ function aggregateDataByCategory(data) {
     categoryNames[categoryId] = entry.category.name;
 
     if (!aggregation[categoryId]) {
-      aggregation[categoryId] = 0;
+      aggregation[categoryId] = {
+        timeSpent: 0
+      };
     }
 
-    aggregation[categoryId] += entry.duration;
+    aggregation[categoryId].timeSpent += entry.duration;
   });
 
   return [categoryNames, aggregation];

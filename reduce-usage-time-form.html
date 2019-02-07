@@ -19,36 +19,63 @@
 
     <!-- Nav -->
     <div class="container-fluid">
-      <div class="row">
-        <main role="main" class="px-5">
-          <h1 class="h1">
-            We noticed that you spent [TIME] in [CATEGORY] in the past 24 hours.
-          </h1>
+      <main role="main">
+        <div id="question-1" class="p-5">
+            <h1 class="h1">
+                We noticed that you spent <span class="time-spent"><em>loading</em></span> in <span class="category"><em>loading</em></span> in the past 24 hours.
+              </h1>
 
-          <p>
-            Did you know that you spent that much time online in [CATEGORY]?
-          </p>
+            <h3><span class="badge badge-light">Question 1 of 2</span></h3>
+          
+            <p>
+                <h3 class="font-weight-normal">
+                Did you know that you spent that much time online in <span class="category"><em>loading</em></span>?
+                </h3>
+              </p>
+    
+              <p>
+                  <h3 class="font-weight-normal">
+                      <button id="aware-yes-button" type="button" class="btn btn-primary">Yes</button>
+                      <button id="aware-no-button" type="button" class="btn btn-danger">No</button>
+                </h3>
+              </p>
+        </div>
 
-          <p>
-            <button>Yes</button>
-            <button>No</button>
-          </p>
+        <div id="question-2" class="d-none p-5">
+            <h1 class="h1">
+                We noticed that you spent <span class="time-spent"><em>loading</em></span> in <span class="category"><em>loading</em></span> in the past 24 hours.
+              </h1>
+          
+            <h3><span class="badge badge-light h1">Question 2 of 2</span></h3>
 
-          <p>
-            Would like to improve your online habits for </label>?
-          </p>
+            <p>
+                <h3 class="font-weight-normal">
+              Would like to improve your online habits for <span class="category"><em>loading</em></span>?
+              </h3>
+            </p>
+  
+            <p>
+              <h3 class="font-weight-normal">
+                  <button id="change-habits-yes-button" type="button" class="btn btn-primary">Yes</button>
+                  <button id="change-habits-no-button" type="button" class="btn btn-danger">No</button>
+              <h3>
+            </p>
+        </div>
 
-          <p>
-            <button>Yes</button>
-            <button>No</button>
+        <div id="thank-you" class="d-none text-center p-5">
+          <p class="h3 font-weight-normal px-5">
+            Thanks! By answering this questionnaire you're helping us
+            understand the habits of internet users.
           </p>
-        </main>
-      </div>
+            <p class="p-3">
+                <button id="close" type="button" class="btn btn-success">Thank you!</button>
+              </p>
+        </div>
+      </main>
     </div>
 
     <script src="js/jquery-slim.min.js"></script>
     <script src="js/bootstrap.bundle.js"></script>
-    <script src="js/chart.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/questionnaire.js"></script>
   </body>
