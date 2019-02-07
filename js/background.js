@@ -2,7 +2,7 @@ async function check24hourNotice() {
   console.log("check24hourNotice");
 
   const visits = await getVisits();
-  const after24Hours = Date.now() - visits.firstHit >= 86400;
+  const after24Hours = Date.now() - visits.firstHit >= 86400000;
 
   console.log({
     after24Hours,
