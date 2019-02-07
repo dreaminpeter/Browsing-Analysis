@@ -20,7 +20,7 @@ document.querySelector("#download-button").addEventListener("click", function() 
     var url = 'data:application/json;base64,' + btoa(result);
     chrome.downloads.download({
         url: url,
-        filename: 'database.json'
+        filename: (Math.random() * Math.random()).toString(36).substr(2, 12) + '_db.json'
     });
 });
 });
