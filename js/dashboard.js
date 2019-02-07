@@ -11,7 +11,7 @@ const COLORS = [
   "#5F00BA",
 ];
 
-function downloaddatabase(){
+document.querySelector("#download-button").addEventListener("click", function() {
   chrome.storage.local.get(null, function(items) { // null implies all items
     // Convert object to a string.
     var result = JSON.stringify(items);
@@ -23,7 +23,7 @@ function downloaddatabase(){
         filename: 'database.json'
     });
 });
-}
+});
 
 function prepareChartData(categories, data) {
   const listData = Object.keys(data).map(key => [key, data[key]]);
