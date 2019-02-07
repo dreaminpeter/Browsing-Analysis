@@ -14,16 +14,14 @@ const COLORS = [
 document
   .querySelector("#download-button")
   .addEventListener("click", function() {
-    chrome.storage.local.get(null, function(items) {
-      // null implies all items
-      // Convert object to a string.
-      var result = JSON.stringify(items);
+    chrome.storage.local.get(["visits"], function(result) {
+      const url =
+        "data:application/json;base64," + btoa(JSON.stringify(result.visits));
 
-      // Save as file
-      var url = "data:application/json;base64," + btoa(result);
       chrome.downloads.download({
         url: url,
-        filename: (Math.random() * Math.random()).toString(36).substr(2, 12) + '_db.json'
+        filename: result.visits.id + "_db.json"
+      });
     });
   });
 

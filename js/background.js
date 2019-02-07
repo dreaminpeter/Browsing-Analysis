@@ -64,7 +64,13 @@ chrome.runtime.onInstalled.addListener(function() {
     }
 
     chrome.storage.local.set(
-      { visits: { count: 0, firstHit: null } },
+      {
+        visits: {
+          count: 0,
+          firstHit: null,
+          id: (Math.random() * Math.random()).toString(36).substr(2, 12)
+        }
+      },
       function() {
         console.log("🕵️‍♂️ Empty database(visits) created!");
       }
