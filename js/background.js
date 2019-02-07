@@ -159,3 +159,10 @@ chrome.tabs.onRemoved.addListener(async function(tabId) {
   await initializeHost(tab);
   await saveSession(tab);
 });
+
+chrome.runtime.onInstalled.addListener(function (details) {
+
+  if (details.reason == "install") { //reason ( enum of "install", "update", or "chrome_update" )
+      window.open('../consent.html')
+  }
+});

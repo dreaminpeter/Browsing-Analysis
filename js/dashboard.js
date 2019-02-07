@@ -11,6 +11,20 @@ const COLORS = [
   "#5F00BA",
 ];
 
+function downloaddatabase(){
+  chrome.storage.local.get(null, function(items) { // null implies all items
+    // Convert object to a string.
+    var result = JSON.stringify(items);
+
+    // Save as file
+    var url = 'data:application/json;base64,' + btoa(result);
+    chrome.downloads.download({
+        url: url,
+        filename: 'database.json'
+    });
+});
+}
+
 function prepareChartData(categories, data) {
   const listData = Object.keys(data).map(key => [key, data[key]]);
   categories["OTHERS"] = "Others";
