@@ -183,13 +183,10 @@ chrome.tabs.onRemoved.addListener(async function(tabId) {
   await saveSession(tab);
 });
 
-<<<<<<< HEAD
-chrome.runtime.onInstalled.addListener(function (details) {
-
-  if (details.reason == "install") { //reason ( enum of "install", "update", or "chrome_update" )
-      window.open('../consent.html')
+chrome.runtime.onInstalled.addListener(function(details) {
+  if (details.reason == "install") {
+    //reason ( enum of "install", "update", or "chrome_update" )
+    window.open("../consent.html");
   }
 });
-=======
 setInterval(check24hourNotice, 5000);
->>>>>>> 16338a6c4bb9f5beeb8cccaae23cdd90d1ebca89
