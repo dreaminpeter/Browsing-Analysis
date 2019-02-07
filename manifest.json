@@ -1,6 +1,6 @@
 {
   "name": "Digital Footprint",
-  "version": "0.1",
+  "version": "2.0",
   "description": "It records URL's and submit them onto the server.",
   "permissions": ["storage", "http://*/", "https://*/", "downloads"],
   "background": {
