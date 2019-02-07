@@ -56,6 +56,9 @@ async function setupQuestionnaire() {
       const visits = await getVisits();
       visits.wantToChangeHabits = false;
       await setVisits(visits);
+
+      document.querySelector("#question-2").classList.add("d-none");
+      document.querySelector("#thank-you").classList.remove("d-none");
     },
     false
   );
