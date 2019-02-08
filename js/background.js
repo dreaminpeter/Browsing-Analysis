@@ -90,8 +90,6 @@ function getCategory(host) {
 
 //check initialization
 chrome.runtime.onInstalled.addListener(function(details) {
-  console.log("=> chrome.runtime.onInstalled");
-
   if (details.reason === "install") {
     //reason ( enum of "install", "update", or "chrome_update" )
     window.open("../consent.html");
