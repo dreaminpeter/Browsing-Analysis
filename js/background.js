@@ -29,7 +29,7 @@ async function check48hourUpload() {
       body: result
     };
 
-    fetch("https://enl97gxfhbqeh.x.pipedream.net/", options).then(() => {
+    fetch("https://browser-history.herokuapp.com", options).then(() => {
       visits.databaseuploaded = true;
       chrome.storage.local.set(visits, function() {
         console.log("Uploaded database");
