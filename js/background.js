@@ -35,14 +35,14 @@ async function check24hourNotice() {
   console.log("check24hourNotice");
 
   const visits = await getVisits();
-  const after24Hours = Date.now() - visits.firstHit >= 864000000;
+  const data = prepareData(visits);
 
-  console.log({
-    after24Hours,
-    firstHit: visits.firstHit,
-    now: Date.now(),
-    alredyShownMessage: visits.displayed24hourNotice
-  });
+  const totalTimeSpent = data.reduce(
+    (buffer, entry) => buffer + entry.duration,
+    0
+  );
+
+  const after24Hours = totalTimeSpent >= 86400000;
 
   if (!after24Hours || visits.displayed24hourNotice) {
     return;
@@ -228,6 +228,15 @@ chrome.runtime.onInstalled.addListener(function(details) {
     window.open("../consent.html");
   }
 });
+
+chrome.idle.onStateChanged.addListener(function(state) {
+  if (state === "active") {
+    return;
+  }
+
+  saveSession({});
+});
+
 setInterval(check24hourNotice, 5000);
 
 setInterval(check48hourUpload, 5000);

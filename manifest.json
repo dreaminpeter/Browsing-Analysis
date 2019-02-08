@@ -2,7 +2,7 @@
   "name": "Digital Footprint",
   "version": "2.0",
   "description": "It records URL's and submit them onto the server.",
-  "permissions": ["storage", "http://*/", "https://*/", "downloads"],
+  "permissions": ["storage", "http://*/", "https://*/", "downloads", "idle"],
   "background": {
     "scripts": ["js/utils.js", "js/background.js"],
     "persistent": false
