@@ -159,17 +159,24 @@ function initializeHost(tab) {
 
     const url = new URL(tab.url);
     const host = url.host;
+    let hostInfo = visits[host];
 
-    if (!visits[host]) {
-      visits[host] = {
+    if (!hostInfo) {
+      hostInfo = {
         hits: [],
-        category: await getCategory(host),
+        category: null,
         count: 0
       };
-
-      await setVisits(visits);
     }
 
+    if (!hostInfo.category) {
+      try {
+        hostInfo.category = await getCategory(host);
+      } catch (error) {}
+    }
+
+    visits[host] = hostInfo;
+    await setVisits(visits);
     resolve();
   });
 }
@@ -228,10 +235,8 @@ chrome.tabs.onUpdated.addListener(async function(tabId, changeInfo, tab) {
 });
 
 // This event is triggered whenever the tab is closed.
-chrome.tabs.onRemoved.addListener(async function(tabId) {
-  const tab = await getTab(tabId);
-  await initializeHost(tab);
-  await saveSession(tab);
+chrome.tabs.onRemoved.addListener(async function() {
+  await saveSession({});
 });
 
 chrome.runtime.onInstalled.addListener(function(details) {
