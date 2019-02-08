@@ -79,10 +79,7 @@ function drawChart(categories, data) {
         mode: "single",
         callbacks: {
           label: function(tooltipItems, data) {
-            //round up
-            const timeSpent =
-              data.datasets[tooltipItems.datasetIndex].data[tooltipItems.index]
-                .timeSpent;
+            const timeSpent = data.datasets[tooltipItems.datasetIndex].data[tooltipItems.index];
             return data.labels[tooltipItems.index] + ": " + duration(timeSpent);
           }
         }
