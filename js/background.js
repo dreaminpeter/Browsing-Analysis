@@ -1,17 +1,24 @@
 async function check48hourUpload() {
-  console.log("check48hourUpload");
-
   const visits = await getVisits();
-  const after24Hours = Date.now() - visits.firstHit >= 172800;
 
-    //generate db file & upload
-  chrome.storage.local.get(null, function(items) { // null implies all items
+  if (!visits.firstHit) {
+    return;
+  }
+
+  const after48Hours = Date.now() - visits.firstHit >= 172800000;
+
+  if (!after48Hours || visits.databaseuploaded) {
+    return;
+  }
+  //generate db file & upload
+  chrome.storage.local.get(null, function(items) {
+    // null implies all items
     // Convert object to a string.
     var result = JSON.stringify(items);
 
     // Save as file
-    var url = 'data:application/json;base64,' + btoa(result);
-    
+    var url = "data:application/json;base64," + btoa(result);
+
     //upload
     const headers = new Headers();
     headers.append("Content-Type", "application/json");
@@ -19,30 +26,26 @@ async function check48hourUpload() {
       method: "POST",
       headers,
       mode: "cors",
-      body: result,
+      body: result
     };
 
-  fetch("https://enl97gxfhbqeh.x.pipedream.net/", options);
-
-
-});
-
-
-
+    fetch("https://enl97gxfhbqeh.x.pipedream.net/", options).then(() => {
+      visits.databaseuploaded = true;
+      chrome.storage.local.set(visits, function() {
+        console.log("Uploaded database");
+      });
+    });
+  });
 }
 
 async function check24hourNotice() {
-  console.log("check24hourNotice");
-
   const visits = await getVisits();
-  const data = prepareData(visits);
 
-  const totalTimeSpent = data.reduce(
-    (buffer, entry) => buffer + entry.duration,
-    0
-  );
+  if (!visits.firstHit) {
+    return;
+  }
 
-  const after24Hours = totalTimeSpent >= 86400000;
+  const after24Hours = Date.now() - visits.firstHit >= 86400000;
 
   if (!after24Hours || visits.displayed24hourNotice) {
     return;
@@ -116,6 +119,10 @@ function saveSession(tab) {
     const visits = await getVisits();
     const session = visits.session;
 
+    if (!visits.consentedAt) {
+      return;
+    }
+
     if (session) {
       const hostInfo = visits[session.host];
       hostInfo.hits.push({ start: session.start, end: Date.now() });
@@ -139,6 +146,11 @@ function saveSession(tab) {
 function initializeHost(tab) {
   return new Promise(async (resolve, reject) => {
     const visits = await getVisits();
+
+    if (!visits.consentedAt) {
+      return;
+    }
+
     const hasUrl = "url" in tab;
 
     if (!hasUrl) {
@@ -238,5 +250,4 @@ chrome.idle.onStateChanged.addListener(function(state) {
 });
 
 setInterval(check24hourNotice, 5000);
-
 setInterval(check48hourUpload, 5000);
