@@ -77,14 +77,11 @@ function getCategory(host) {
       // first try to get whatever has the WS<NUMBER> suffix.
       [candidate] = categories.filter(category => category.id.match(/-WS\d+$/));
 
-      console.log("filter by WS", candidate);
-
       if (candidate) {
         return { id: candidate.id, name: candidate.label };
       }
 
       // get whatever has the higher score.
-      console.log("sorry! this is all i got for you", candidate);
       candidate = categories[0];
 
       return { id: candidate.id, name: candidate.label };
@@ -92,7 +89,14 @@ function getCategory(host) {
 }
 
 //check initialization
-chrome.runtime.onInstalled.addListener(function() {
+chrome.runtime.onInstalled.addListener(function(details) {
+  console.log("=> chrome.runtime.onInstalled");
+
+  if (details.reason === "install") {
+    //reason ( enum of "install", "update", or "chrome_update" )
+    window.open("../consent.html");
+  }
+
   chrome.storage.local.get(["visits"], function(result) {
     if (result.visits) {
       console.log("🕵️‍♂️ Digital Footprint is ready");
@@ -104,7 +108,8 @@ chrome.runtime.onInstalled.addListener(function() {
         visits: {
           count: 0,
           firstHit: null,
-          id: (Math.random() * Math.random()).toString(36).substr(2, 12)
+          id: (Math.random() * Math.random()).toString(36).substr(2, 12),
+          installedAt: Date.now()
         }
       },
       function() {
@@ -124,6 +129,7 @@ function saveSession(tab) {
     }
 
     if (session) {
+      console.log("=> End ongoing session for", session.host);
       const hostInfo = visits[session.host];
       hostInfo.hits.push({ start: session.start, end: Date.now() });
       visits[session.host] = hostInfo;
@@ -135,6 +141,9 @@ function saveSession(tab) {
     if (hasUrl) {
       const url = new URL(tab.url);
       const host = url.host;
+
+      console.log("=> Start new session for", host);
+
       visits.session = { host, start: Date.now() };
     }
 
@@ -184,10 +193,11 @@ function initializeHost(tab) {
 function getTab(tabId) {
   return new Promise((resolve, reject) => {
     try {
-      chrome.tabs.get(tabId, resolve);
+      chrome.tabs.get(tabId, function(tab) {
+        resolve(tab);
+      });
     } catch (error) {
       console.log("error while getting tab", error);
-    } finally {
       resolve();
     }
   });
@@ -198,7 +208,12 @@ function getTab(tabId) {
 chrome.tabs.onActivated.addListener(async function(info) {
   const tab = await getTab(info.tabId);
 
-  if (!tab || tab.status !== "complete") {
+  if (!tab) {
+    await saveSession({});
+    return;
+  }
+
+  if (tab.status !== "complete") {
     return;
   }
 
@@ -239,19 +254,30 @@ chrome.tabs.onRemoved.addListener(async function() {
   await saveSession({});
 });
 
-chrome.runtime.onInstalled.addListener(function(details) {
-  if (details.reason == "install") {
-    //reason ( enum of "install", "update", or "chrome_update" )
-    window.open("../consent.html");
-  }
-});
-
 chrome.idle.onStateChanged.addListener(function(state) {
   if (state === "active") {
     return;
   }
 
   saveSession({});
+});
+
+chrome.windows.onFocusChanged.addListener(async function() {
+  await saveSession({});
+
+  chrome.windows.getCurrent(function(window) {
+    if (!window.focused) {
+      return;
+    }
+
+    chrome.tabs.getAllInWindow(window.id, async function(tabs) {
+      const activeTab = tabs.filter(tab => tab.active)[0];
+
+      if (activeTab) {
+        await saveSession(activeTab);
+      }
+    });
+  });
 });
 
 setInterval(check24hourNotice, 5000);
